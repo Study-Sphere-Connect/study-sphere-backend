@@ -126,40 +126,37 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
     const file = req.file;
     const { content } = req.body;
 
-    console.log(file?.path);
-    console.log(content);
+    if (!content || !file?.path) {
+        throw new Error("Content and Image is required");
+    }
 
-    // if (!content || !imageUrl) {
-    //     throw new Error("Content and Image URL are required");
-    // }
+    const user = req.user;
 
-    // const user = req.user;
+    if (!user) {
+        throw new Error("Unauthorized");
+    }
 
-    // if (!user) {
-    //     throw new Error("Unauthorized");
-    // }
+    if(user.role !== "MENTOR" && user.role !== "MENTEE") {
+        throw new Error("Unauthorized");
+    }
 
-    // if(user.role !== "MENTOR" && user.role !== "MENTEE") {
-    //     throw new Error("Unauthorized");
-    // }
+    try {
+        const post = await prisma.post.create({
+            data: {
+                userId: user.id,
+                content,
+                imageUrl: file.path,
+            }
+        })
 
-    // try {
-    //     const post = await prisma.post.create({
-    //         data: {
-    //             userId: user.id,
-    //             content,
-    //             imageUrl,
-    //         }
-    //     })
+        if (!post) {
+            throw new Error("Error while creating post.");
+        }
 
-    //     if (!post) {
-    //         throw new Error("Error while creating post.");
-    //     }
-
-    //     res.status(201).json("Post created successfully");
-    // } catch (error: any) {
-    //     throw new Error(error.message);
-    // }
+        res.status(201).json("Post created successfully");
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
 };
 
 const deletePost = async (req: AuthenticatedRequest, res: Response) => {
