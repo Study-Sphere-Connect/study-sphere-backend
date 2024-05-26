@@ -1,11 +1,14 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { prisma } from "../index";
 import { AuthenticatedRequest } from "../types";
 
-const getConversations = async (req: AuthenticatedRequest, res: Response) => {
+const getConversations = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-        // const user = req.user;
-        const user = {id:"clsw0qelu0000i6nx9s8cygje"};
+        const user = req.user;
+        if(!user)
+            {
+                return res.status(401).json({ error: "Unauthorized"})
+            }
         console.log(user);
         const conversations = await prisma.conversation.findMany({
             where: {
@@ -28,25 +31,25 @@ const getConversations = async (req: AuthenticatedRequest, res: Response) => {
                         image: true,
                         name: true,
                     }
-                },
-                messages: {
-                    select: {
-                        content: true,
-                        id: true,
-                        senderId: true,
-                        conversationId: true,
-                        createdAt: true
-                    },
-                    orderBy: {
-                        createdAt: 'asc',
-                    },
                 }
             },
         });
-        res.json(conversations);
+
+        const filteredConversations = conversations.map(conversation => {
+            const otherUser = conversation.user_oneId === user.id ? conversation.user_two : conversation.user_one;
+            return {
+                id: conversation.id,
+                lastMessage: conversation.lastMessage,
+                status: conversation.status,
+                name: otherUser.name,
+                profilePhoto: otherUser.image
+            };
+        });
+        console.log(filteredConversations);
+        res.json(filteredConversations);
     }
     catch (error: any) {
-        throw new Error(error.message);
+        next(error);
     }
 }
 
