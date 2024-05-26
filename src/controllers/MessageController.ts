@@ -1,33 +1,35 @@
 
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { prisma } from "../index";
 import { AuthenticatedRequest } from "../types";
 
-const getMessages = async (req: Request, res: Response) => {
+const getMessages = async (req: Request, res: Response, next:NextFunction) => {
     const conversationId = req.params.id
+    console.log(conversationId);
     try {
         const messages = await prisma.message.findMany(
             {
                 where: {
-                    id: conversationId
+                    conversationId: conversationId
                 }
             }
         );
+        console.log(messages);
         res.json(messages);
     }
     catch (error: any) {
-        throw new Error(error.message);
+        next(error);
     }
 }
 
-const createMessage = async (req: AuthenticatedRequest, res: Response) => {
+const createMessage = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-        //   const Pusher = require("pusher");
-        // const user = req.user;
-        const user = {id:"clsw0qelu0000i6nx9s8cygje"};
+        // const Pusher = require("pusher");
+        const user = req.user;
+        // const user = {id:"clsw0qelu0000i6nx9s8cygje"};
         const { conversationId, senderId, content } = req.body;
         if (user?.id !== senderId) {
-            return { error: "User not authorized!" }
+            res.status(401).json({ error: "User not authorized!" });
         }
 
         //   const dummyMessage = {
@@ -63,7 +65,7 @@ const createMessage = async (req: AuthenticatedRequest, res: Response) => {
         res.json(newMessage);
     }
     catch (error: any) {
-        throw new Error(error.message);
+        next(error);
     }
 };
 
