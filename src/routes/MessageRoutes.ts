@@ -4,7 +4,7 @@ import MessageController from '../controllers/MessageController';
 
 const router = express.Router();
 
-router.get('/get',MessageController.getMessages);
-router.get('/create',MessageController.createMessage);
+router.get('/:id', authenticateJWT, MessageController.getMessages);
+router.post('/create', authenticateJWT, MessageController.createMessage);
 
 export default router;
