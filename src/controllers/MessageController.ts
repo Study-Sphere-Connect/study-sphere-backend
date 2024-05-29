@@ -1,4 +1,4 @@
-
+import pusher from "./../pusher/pusher";
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../index";
 import { AuthenticatedRequest } from "../types";
@@ -32,15 +32,15 @@ const createMessage = async (req: AuthenticatedRequest, res: Response, next: Nex
             res.status(401).json({ error: "User not authorized!" });
         }
 
-        //   const dummyMessage = {
-        //     id:Math.random().toString(36).substring(2),
-        //     conversationId: values.conversationId,
-        //     content: values.content,
-        //     senderId: values.senderId,
-        //   }
-        //   pusherServer.trigger(dummyMessage.conversationId, "chat", {
-        //     message: `${JSON.stringify(dummyMessage)}\n\n`
-        //   });
+          const dummyMessage = {
+            id:Math.random().toString(36).substring(2),
+            conversationId: conversationId,
+            content: content,
+            senderId: senderId,
+          }
+          pusher.trigger(dummyMessage.conversationId, "chat", {
+            message: JSON.stringify(dummyMessage)
+          });
 
         // creating new message in the database
         const newMessage = await prisma.message.create({
