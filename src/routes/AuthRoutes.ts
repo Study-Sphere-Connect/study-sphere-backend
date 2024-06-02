@@ -9,5 +9,6 @@ const router = express.Router();
 router.post('/signup', validate(SignUpSchema), AuthController.signUp)
 router.post('/signin', validate(SignInSchema), AuthController.signIn)
 router.get('/userinfo', authenticateJWT, AuthController.getUserInfo)
+router.get('/user/:id', authenticateJWT, AuthController.getUserById)
 
 export default router;

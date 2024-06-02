@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest } from "../types";
 
 const signUp = async (req: Request, res: Response) => {
-    console.log("I RUN");
     const { name, email, password, role } = req.body;
 
     const saltRounds = 10;
@@ -79,10 +78,31 @@ const getUserInfo = async (req: AuthenticatedRequest, res: Response) => {
 
 };
 
+const getUserById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: id,
+            },
+        });
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        res.status(200).json(user);
+    } catch (err: any) {
+        throw new Error(err.message);
+    }
+}
+
 export default {
   signUp,
   signIn,
-  getUserInfo
+  getUserInfo,
+  getUserById
 };
 
 
