@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import AuthRouter from './routes/AuthRoutes';
 import EducationRouter from './routes/EducationRoutes';
 import PostRouter from './routes/PostRoutes';
+import ConversationRouter from './routes/ConversationRoutes';
+import MessageRouter from './routes/MessageRoutes';
 import dotenv from "dotenv";
 import "express-async-errors";
 import bodyParser from "body-parser";
@@ -25,7 +27,9 @@ async function main() {
   // API Routes
   app.use("/api/v1/auth", AuthRouter);
   app.use("/api/v1/education", EducationRouter);
-  app.use("/api/v1/post", PostRouter)
+  app.use("/api/v1/post", PostRouter);
+  app.use("/api/v1/conversation", ConversationRouter);
+  app.use("/api/v1/message", MessageRouter);
 
   app.use(errorHandler);
 

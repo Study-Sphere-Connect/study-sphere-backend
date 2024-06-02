@@ -71,7 +71,7 @@ const verifyEducation = async (req: AuthenticatedRequest, res: Response) => {
     });
   
     if(!education) {
-      throw new Error("Education not found");
+       return res.status(404).json({ error: "Education not found" });
     }
 
     const existingEducationVerification = await prisma.educationVerification.findFirst({
@@ -122,7 +122,7 @@ const getUserEducation = async (req: AuthenticatedRequest, res: Response) => {
     });
 
     if(!education) {
-      throw new Error("Education not found");
+      return res.status(404).json({ error: "Education not found" });
     }
 
     res.json(education);
