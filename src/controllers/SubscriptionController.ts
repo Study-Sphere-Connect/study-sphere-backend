@@ -72,8 +72,6 @@ export const createSubscriptionAction = async (req: AuthenticatedRequest, res: R
 
 
 export const getSubscriptionByUserAction = async (req: AuthenticatedRequest, res: Response) => {
-
-
     const user = req.user;
 
     if (!user) {
@@ -83,12 +81,12 @@ export const getSubscriptionByUserAction = async (req: AuthenticatedRequest, res
 
     if (user.role !== "MENTOR" && user.role !== "MENTEE") {
         return res.status(404).json({ errors: [{ message: "Subscription not found" }] });
-
     }
+
     try {
         const subscription = await prisma.subscription.findFirst({
             where: {
-                userId: user?.id
+                userId: user.id
             }
         });
 
