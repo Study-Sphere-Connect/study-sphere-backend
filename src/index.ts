@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import AuthRouter from './routes/AuthRoutes';
+import WalletRouter from './routes/WalletRoutes';
 import EducationRouter from './routes/EducationRoutes';
 import PostRouter from './routes/PostRoutes';
 import SubscriptionRouter from './routes/SubscriptionRoutes';
@@ -35,6 +36,7 @@ async function main() {
   app.use("/api/v1/post", PostRouter);
   app.use("/api/v1/conversation", ConversationRouter);
   app.use("/api/v1/message", MessageRouter);
+  app.use("/api/v1/wallet", WalletRouter);
 
   app.use(errorHandler);
 
